@@ -209,6 +209,33 @@ def make_main_function(filename):
     result += "}\n\n"
     return result
 
+'''
+Create the main() function for the C source file - with call to file open
+'''
+def make_main_function_with_file_map(filename):
+    result =  "int main( int argc, char* argv[] )\n"
+    result += "{\n"
+    result += "     int retVal = -1;\n"
+    result += "     Map input = {0};\n"
+    result += "\n"
+    result += "     if( argc < 2 )\n"
+    result += "     {\n"
+    result += "          printf( \"Usage: %%s <inputfile>\\n\", \"%s\");\n" % filename
+    result += "          retVal = 0;\n"
+    result += "          goto end;\n"
+    result += "     }\n"
+    result += "\n"
+    result += "     if( map_file( argv[1], &input ) == false )\n"
+    result += "     {\n"
+    result += "          goto end;\n"
+    result += "     }\n"
+    result += "\n"
+    result += "     retVal = 0;\n"
+    result += "end:\n"
+    result += "     unmap_file( &input );\n"
+    result += "     return retVal;\n"
+    result += "}\n\n"
+    return result
 
 '''
 Create the Makefile
@@ -243,7 +270,10 @@ def make_c_file(filestem, path_and_filename, include_header=False, include_utili
     if( include_utility == True ):
         result += "#include \"%s.h\"\n" % UTILITY_HEADER
     result += "\n\n"
-    result += make_main_function(filestem)
+    if( include_utility == True ):
+        result += make_main_function_with_file_map(filestem)
+    else:
+        result += make_main_function(filestem)
 
     # write it to the file
     try:

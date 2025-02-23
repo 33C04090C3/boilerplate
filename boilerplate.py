@@ -32,7 +32,9 @@ typedef struct _map
      bool      mapped;
 }Map, *PMap;
 
-
+bool convert_string_to_unsigned_long( const char* in, unsigned long* out );
+bool convert_string_to_uint64_t( const char* in, unsigned long* out );
+bool convert_string_to_size_t( const char* in, unsigned long* out );
 void hexdump( const uint8_t* buffer, const size_t size );
 bool map_file( const char* filename, PMap m );
 bool unmap_file( PMap m );
@@ -47,11 +49,52 @@ utility_code = """
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <elf.h>
 
 #include "utils.h"
+
+bool convert_string_to_unsigned_long( const char* in, unsigned long* out )
+{
+    char* endptr = NULL;
+    errno = 0;
+    unsigned long result = strtoul( in, &endptr, 0 );
+    if( in == endptr || *endptr || errno != 0 )
+    {
+        return false;
+    }
+    *out = result;
+    return true;
+}
+
+bool convert_string_to_uint64_t( const char* in, uint64_t* out )
+{
+    char* endptr = NULL;
+    errno = 0;
+    unsigned long long result = strtoull( in, &endptr, 0 );
+    if( in == endptr || *endptr || errno != 0 )
+    {
+        return false;
+    }
+    *out = (uint64_t)result;
+    return true;
+}
+
+bool convert_string_to_size_t( const char* in, size_t* out )
+{
+    char* endptr = NULL;
+    errno = 0;
+    unsigned long long result = strtoull( in, &endptr, 0 );
+    if( in == endptr || *endptr || errno != 0 )
+    {
+        return false;
+    }
+    *out = (size_t)result;
+    return true;
+}
 
 void hexdump( const uint8_t* buffer, const size_t size )
 {
@@ -242,7 +285,7 @@ Create the Makefile
 '''
 def make_makefile(filestem, path_and_filename, files=[]):
     result = "all:\n\t"
-    result += "gcc -o %s " % filestem
+    result += "gcc -Wall -Werror -o %s " % filestem
     for i in files:
         result += "%s " % i
     result += "\n"

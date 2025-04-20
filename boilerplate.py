@@ -236,6 +236,10 @@ Create the includes block for the C source file
 def make_includes(includes=()):
     result =  "#include <stdio.h>\n"
     result += "#include <stdint.h>\n"
+    result += "#include <stdlib.h>\n"
+    result += "#include <string.h>\n"
+    result += "#include <stdbool.h>\n"
+    result += "#include <unistd.h>\n" 
     for i in includes:
         result += "#include <%s>\n" % i
     return result

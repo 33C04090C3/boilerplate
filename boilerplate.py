@@ -112,7 +112,7 @@ bool convert_string_to_uint32_t( const char* in, uint32_t* out );
 bool convert_string_to_uint64_t( const char* in, uint64_t* out );
 bool convert_string_to_size_t( const char* in, size_t* out );
 void hexdump( const uint8_t* buffer, const size_t size );
-void hexdump_with_address( const uint8_t* buffer, const size_t size );
+void hexdump_with_address( const uint8_t* buffer, const size_t size, const size_t address );
 bool map_file( const char* filename, PMap m );
 bool unmap_file( PMap m );
 """
@@ -280,7 +280,7 @@ bool map_file( const char* filename, PMap m )
           return false;
      }
 
-     if( ( temp_ptr   = (uint8_t*)mmap( NULL, 
+     if( ( temp_ptr   = (uint8_t*)mmap( NULL,
                                       s.st_size,
                                       PROT_READ,
                                       MAP_PRIVATE,
@@ -363,7 +363,7 @@ def make_includes(includes=()):
     result += "#include <string.h>\n"
     result += "#include <stdbool.h>\n"
     result += "#include <stddef.h>\n"
-    result += "#include <unistd.h>\n" 
+    result += "#include <unistd.h>\n"
     for i in includes:
         result += "#include <%s>\n" % i
     return result
@@ -445,7 +445,7 @@ def make_makefile(filestem, path_and_filename, files=[], has_asm32=False, has_as
     except Exception as e:
         print( "Error: %s\n" % e )
         return False
-    
+
     return True
 
 
@@ -453,7 +453,7 @@ def make_makefile(filestem, path_and_filename, files=[], has_asm32=False, has_as
 Create a C source file
 '''
 def make_c_file(filestem, path_and_filename, include_header=False, include_utility=False, make_mapping=False, has_asm32=False, has_asm64=False):
-    
+
     # assemble the file contents
     result =  make_comment_block(filestem)
     result += make_includes()
@@ -595,7 +595,7 @@ def main():
 
     file_list = []
     path = current_directory + '/' + stem
-    mkdir(path) 
+    mkdir(path)
     c_source_path_filename = "%s/%s.c" % ( path, stem )
     file_list.append( "%s.c" % stem )
     c_header_path_filename = ""
@@ -610,7 +610,7 @@ def main():
         if( make_utility_header( stem, utility_header_path_filename ) == False ):
             print( "Error creating utility header file" )
             exit(-1)
-        
+
         if( make_utility_code( stem, utility_code_path_filename ) == False ):
             print( "Error creating utility source code file" )
             exit(-1)
@@ -619,12 +619,12 @@ def main():
     if args.create_header:
         c_header_path_filename = "%s/%s.h" % ( path, stem )
 
-    # only necessary if a bare C file is being created    
+    # only necessary if a bare C file is being created
     if args.create_makefile:
         has_makefile = True
-        
 
-    # assume if we're creating assembly source then we need a makefile 
+
+    # assume if we're creating assembly source then we need a makefile
     if args.create_asm32:
         assembly_source_name_32 = ASM32_SOURCE_SUFFIX % stem
         assembly_object_name_32 = ASM32_OBJECT_SUFFIX % stem
@@ -658,7 +658,7 @@ def main():
             print( "Error creating Makefile" )
             exit(-1)
 
-    print( "[Ok]" ) 
+    print( "[Ok]" )
 
 
 if __name__ == "__main__":

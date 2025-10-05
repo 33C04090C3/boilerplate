@@ -112,6 +112,7 @@ bool convert_string_to_uint32_t( const char* in, uint32_t* out );
 bool convert_string_to_uint64_t( const char* in, uint64_t* out );
 bool convert_string_to_size_t( const char* in, size_t* out );
 void hexdump( const uint8_t* buffer, const size_t size );
+void hexdump_with_address( const uint8_t* buffer, const size_t size );
 bool map_file( const char* filename, PMap m );
 bool unmap_file( PMap m );
 """
@@ -182,39 +183,81 @@ void hexdump( const uint8_t* buffer, const size_t size )
 
     for( i = 0; i < size; i += 16 )
     {
-    	printf( "0x%08zX: ", i );
-    	for( j = 0; j < 16; j++ )
-    	{
-    		if( (i+j) < size )
-    		{
-    			printf( "%02X ", buffer[i+j] );
-    		}
-    		else
-    		{
-    			printf( "   " );
-    		}
-    	}
-    	printf( "		" );
-    	for( j = 0; j < 16; j++ )
-    	{
-    		if( (i+j) < size )
-    		{
-    			uint8_t temp = buffer[i+j];
-    			if( temp >= 0x20 && temp < 0x7F )
-    			{
-    				printf( "%c", temp );
-    			}
-    			else
-    			{
-    				printf( "." );
-    			}
-    		}
-    		else
-    		{
-    			printf( " " );
-    		}
-    	}
-    	printf( "\\n" );
+        printf( "0x%08zX: ", i );
+        for( j = 0; j < 16; j++ )
+        {
+            if( (i+j) < size )
+            {
+                printf( "%02X ", buffer[i+j] );
+            }
+            else
+            {
+                printf( "   " );
+            }
+        }
+        printf( "        " );
+        for( j = 0; j < 16; j++ )
+        {
+            if( (i+j) < size )
+            {
+                uint8_t temp = buffer[i+j];
+                if( temp >= 0x20 && temp < 0x7F )
+                {
+                    printf( "%c", temp );
+                }
+                else
+                {
+                    printf( "." );
+                }
+            }
+            else
+            {
+                printf( " " );
+            }
+        }
+        printf( "\\n" );
+    }
+}
+
+void hexdump_with_address( const uint8_t* buffer, const size_t size, const size_t address )
+{
+    size_t i = 0, j = 0;
+
+    for( i = 0; i < size; i += 16 )
+    {
+        printf( "0x%08zX: ", address + i );
+        for( j = 0; j < 16; j++ )
+        {
+            if( (i+j) < size )
+            {
+                printf( "%02X ", buffer[i+j] );
+            }
+            else
+            {
+                printf( "   " );
+            }
+        }
+        printf( "        " );
+        for( j = 0; j < 16; j++ )
+        {
+            if( (i+j) < size )
+            {
+                uint8_t temp = buffer[i+j];
+                if( temp >= 0x20 && temp < 0x7F )
+                {
+                    printf( "%c", temp );
+                }
+                else
+                {
+                    printf( "." );
+                }
+            }
+            else
+            {
+                printf( " " );
+            }
+        }
+        printf( "\\n" );
     }
 }
 

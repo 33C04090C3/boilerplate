@@ -395,7 +395,7 @@ def make_main_function_with_file_map(filename, add_asm32_call=False, add_asm64_c
     result += "\n"
     result += "     if( argc < 2 )\n"
     result += "     {\n"
-    result += "          printf( \"Usage: \%s <inputfile>\\n\", argv[0]);\n"
+    result += "          printf( \"Usage: %s <inputfile>\\n\", argv[0]);\n"
     result += "          retVal = 0;\n"
     result += "          goto end;\n"
     result += "     }\n"
